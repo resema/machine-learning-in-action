@@ -142,6 +142,9 @@ def updateEk(oS, k):
   Ek = calcEk(oS, k)
   oS.eCache[k] = [1, Ek]
   
+''' 
+A 1 will be returned if any pairs get changed
+'''
 def innerL(i, oS):
   Ei = calcEk(oS, i)
   if ((oS.labelMat[i]*Ei < -oS.tol) and (oS.alphas[i] < oS.C)) or \
@@ -186,19 +189,22 @@ def innerL(i, oS):
       oS.b = (b1 + b2)/2.0
     return 1
   else:
-  return 0
+    return 0
   
 def smoP(dataMatIn, classLabels, C, toler, maxIter, kTup=('lin', 0)):
-  oS = optStruc(mat(dataMatIn), mat(classLabels).transpose(), C, toler)
+  oS = optStruct(mat(dataMatIn), mat(classLabels).transpose(), C, toler)
   iter = 0
   entireSet = True; alphaPairsChanged = 0
   while (iter < maxIter) and ((alphaPairsChanged > 0) or (entireSet)):
     alphaPairsChanged = 0
+    # 1: fo over all values
     if entireSet:
       for i in range(oS.m):
+        # choose second alpha and do optimization if possible
         alphaPairsChanged += innerL(i, oS)
-      print "fullset, iter: %d i:%d, pairs chagned %d" % (iter, i, alphaPairsChanged)
+      print "fullset, iter: %d i:%d, pairs changed %d" % (iter, i, alphaPairsChanged)
       iter += 1
+    # 2: go over non-bound values
     else:
       nonBoundIs = nonzero((oS.alphas.A > 0) * (oS.alphas.A < C))[0]
       for i in nonBoundIs:
