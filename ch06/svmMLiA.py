@@ -9,7 +9,6 @@ from numpy import *
 '''
 simple minimize optimization approch
 '''
-    
 def loadDataSet(fileName):
   dataMat = []; labelMat = []
   fr = open(fileName)
@@ -100,7 +99,6 @@ def smoSimple(dataMatIn, classLabels, C, toler, maxIter):
 '''
 full platt SMO approach
 '''
-  
 class optStruct:
   def __init__(self,dataMatIn, classLabels, C, toler):
     self.X = dataMatIn
