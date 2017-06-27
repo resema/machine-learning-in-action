@@ -26,6 +26,9 @@ def standRegres(xArr, yArr):
     return
   ws = xTx.I * (xMat.T*yMat)
   return ws
+  
+def lwlr(testPoint, xArr, yArr, k=1.0):
+  xMat
 
 
 
