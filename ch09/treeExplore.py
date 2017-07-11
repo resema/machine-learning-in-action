@@ -15,11 +15,35 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 
 def reDraw(tolS, tolN):
-  pass
+  reDraw.f.clf()
+  reDraw.a = reDraw.f.add_subplot(111)
+  reDraw.a.scatter(reDraw.rawDat[:,0].tolist(), reDraw.rawDat[:,1].tolist())
+  reDraw.canvas.show()
+  
+def getInputs():
+  try: tolN = int(tolNentry.get())
+  except:
+    tolN = 10
+    print "enter Integer for tolN"
+    # clear error and replace with default
+    tolNentry.delete(0, END)
+    tolNentry.insert(0, '10')
+  try: tolS = float(tolSentry.get())
+  except:
+    tolS = 1.0
+    print "enter Float for tolS"
+    # clear error and replace with default
+    tolSentry.delete(0, END)
+    tolSentry.insert(0, '1.0')
+  return tolN, tolS
   
 def drawNewTree():
-  pass
+  tolN, tolS = getInputs()
+  reDraw(tolS, tolN)
   
+'''
+GUI bootstrapping
+'''
 root = Tk()
 
 # Label(root, text = "Plot Place Holder").grid(row=0, columnspan=3)
@@ -49,3 +73,13 @@ reDraw.testDat = arange(min(reDraw.rawDat[:,0]), max(reDraw.rawDat[:,0]), 0.01)
 reDraw(1.0, 10)
 
 root.mainloop()
+
+
+
+
+
+
+
+
+
+
