@@ -70,7 +70,7 @@ chkBtn.grid(row=3, column=0, columnspan=2)
 
 reDraw.rawDat = mat(regTrees.loadDataSet('sine.txt'))
 reDraw.testDat = arange(min(reDraw.rawDat[:,0]), max(reDraw.rawDat[:,0]), 0.01)
-reDraw(1.0, 10)
+# reDraw(1.0, 10)
 
 root.mainloop()
 
