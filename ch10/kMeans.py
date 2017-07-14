@@ -6,6 +6,9 @@ Grouping unlabeled items using k-means clustering
 '''
 
 from numpy import *
+import urllib
+import json
+from time import sleep
 
 def loadDataSet(fileName):
   dataMat = []
@@ -58,7 +61,7 @@ def kMeans(dataSet, k, distMeas=distEclud, createCent=randCent):
 def biKmeans(dataSet, k, distMeas=distEclud):
   m = shape(dataSet)[0]
   clusterAssment = mat(zeros((m,2)))
-  # initially create one cluster
+  # 1: initially create one cluster
   centroid0 = mean(dataSet, axis=0).tolist()[0]
   centList = [centroid0]
   for j in range(m):
@@ -66,32 +69,61 @@ def biKmeans(dataSet, k, distMeas=distEclud):
   while(len(centList) < k):
     lowestSSE = inf   # SSE: sum of squared errors
     for i in range(len(centList)):
-      # try splitting every cluster
+      # 2: try splitting every cluster
       ptsInCurrCluster = dataSet[nonzero(clusterAssment[:,0].A==i)[0],:]
-      centroidMat, splitCustAss = kMeans(ptsInCurrCluster, 2, disMeas)
+      centroidMat, splitClustAss = kMeans(ptsInCurrCluster, 2, distMeas)
       sseSplit = sum(splitClustAss[:,1])
       sseNotSplit = sum(clusterAssment[nonzero(clusterAssment[:,0].A!=i)[0],1])
       print "sseSplit, and notSplit: ", sseSplit, sseNotSplit
       if(sseSplit + sseNotSplit) < lowestSSE:
         bestCentToSplit = i
         bestNewCents = centroidMat
-        bestClusAss = splitClustAss.copy()
+        bestClustAss = splitClustAss.copy()
         lowestSSE = sseSplit + sseNotSplit
-    # update the cluster assignments
+    # 3: update the cluster assignments
     bestClustAss[nonzero(bestClustAss[:,0].A == 1)[0],0] = len(centList)
-    bestClussAss[nonzero(bestClustAss[:,0].A == 0)[0],0] = bestCentToSplit
+    bestClustAss[nonzero(bestClustAss[:,0].A == 0)[0],0] = bestCentToSplit
     print 'the bestCentToSplit is: ', bestCentToSplit
     print 'the len of bestClustAss is: ', len(bestClustAss)
     centList[bestCentToSplit] = bestNewCents[0,:]
-    centList.append(bestNewCents[1,:])
+    centList.append(bestNewCents[1,:].tolist()[0])
     clusterAssment[nonzero(clusterAssment[:,0].A == bestCentToSplit)[0],:] = bestClustAss
   return mat(centList), clusterAssment
   
+def geoGrab(stAddress, city):
+  apiStem = 'https://maps.googleapis.com/maps/api/geocode/json?'
+  params = {}
+  # 1: set JSON as return type
+  params['address'] = '%s %s' % (stAddress, city)
+  params['key'] = 'AIzaSyArXPPExHkU6J8WW6sJiMOCqClPwEZYIHE'
+  url_params = urllib.urlencode(params)
+  googleApi = apiStem + url_params
+  # 2: print outgoing URL
+  # print googleApi
+  c = urllib.urlopen(googleApi)
+  return json.loads(c.read())
+  
+def massPlaceFind(fileName):
+  fw = open('places.txt', 'w')
+  for line in open(fileName).readlines():
+    line = line.strip()
+    lineArr = line.split('\t')
+    retDict = geoGrab(lineArr[1], lineArr[2])
+    # if retDict['ResultSet']['Error'] == 0:
+    if retDict['status'] == 'OK':
+      lat = float(retDict['results'][0]['geometry']['location']['lat'])
+      lng = float(retDict['results'][0]['geometry']['location']['lng'])
+      print "%s\t%f\t%f" % (lineArr[0], lat, lng)
+      fw.write('%s\t%f\t%f\n' % (line, lat, lng))
+    else:
+      print "error fetching"
+    sleep(1)
+  fw.close()
   
   
   
   
-  
+
   
   
   
