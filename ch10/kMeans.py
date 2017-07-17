@@ -86,9 +86,9 @@ def biKmeans(dataSet, k, distMeas=distEclud):
     print 'the bestCentToSplit is: ', bestCentToSplit
     print 'the len of bestClustAss is: ', len(bestClustAss)
     centList[bestCentToSplit] = bestNewCents[0,:]
-    centList.append(bestNewCents[1,:].tolist()[0])
+    centList.append(bestNewCents[1,:])
     clusterAssment[nonzero(clusterAssment[:,0].A == bestCentToSplit)[0],:] = bestClustAss
-  return mat(centList), clusterAssment
+  return centList, clusterAssment
   
 def geoGrab(stAddress, city):
   apiStem = 'https://maps.googleapis.com/maps/api/geocode/json?'
@@ -149,9 +149,14 @@ def clusterClubs(numClust=5):
     ax1.scatter(ptsInCurrCluster[:,0].flatten().A[0], \
                 ptsInCurrCluster[:,1].flatten().A[0], \
                 marker=markerStyle, s=90)
-  ax1.scatter(myCentroids[:,0].flatten().A[0], \
-              myCentroids[:,1].flatten().A[0], marker='+', s=300)
+  myCents = mat(zeros((numClust, 2)))
+  for i in range(numClust):
+    myCents[i,0] = myCentroids[i][:,0]
+    myCents[i,1] = myCentroids[i][:,1]
+  ax1.scatter([myCents[:,0]], \
+              [myCents[:,1]], marker='+', s=300)
   plt.show()
+  
   
   
   
