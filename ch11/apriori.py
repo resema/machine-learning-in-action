@@ -101,6 +101,30 @@ def rulesFromConseq(freqSet, H, supportData, br1, minConf=0.7):
     hmp1 = calcConf(freqSet, Hmp1, supportData, br1, minConf)
     if (len(hmp1) > 1):
       rulesFromConseq(freqSet, Hmp1, supportData, br1, minConf)
+      
+from time import sleep
+from votesmart import votesmart
+votesmart.apikey = 'a7fa40adec6f4a77178799fae4441030'
+def getActionIds():
+  actionIdList = []; billTitleList = []
+  fr = open('recent20bills.txt')
+  for line in fr.readlines():
+    billNum = int(line.split('\t')[0])
+    try:
+      billDetail = votesmart.votes.getBill(billNum)
+      for action in billDetail.actions:
+        # 1: Filter out actions that have votes
+        if action.level == 'House' and \
+          (action.stage == 'Passage' or \
+           action.stage == 'Amendment Vote'):
+          actionId = int(action.actionId)
+          print 'bill: %d has actionId: %d' % (billNum, actionId)
+          actionIdList.append(actionId)
+          billTitleList.append(line.strip().split('\t')[1])
+    except:
+      print 'problem getting bill %d' % billNum
+    # 2: delay to be polite
+  return actionIdList, billTitleList
 
 
 
