@@ -97,7 +97,27 @@ def createInitSet(dataSet):
     retDict[frozenset(trans)] = 1
   return retDict
       
-
+'''
+find the prefix path
+'''
+def ascendTree(leafNode, prefixPath):
+  # 1: recursively ascend the tree
+  if leafNode.parent != None:
+    prefixPath.append(leafNode.name)
+    ascendTree(leafNode.parent, prefixPath)
+    
+''' 
+iterates through the header table and calls ascendTree on each item 
+'''
+def findPrefixPath(basePat, treeNode):
+  condPats = {}
+  while treeNode != None:
+    prefixPath = []
+    ascendTree(treeNode, prefixPath)
+    if len(prefixPath) > 1:
+      condPats[frozenset(prefixPath[1:])] = treeNode.count
+    treeNode = treeNode.nodeLink
+  return condPats
 
 
 
