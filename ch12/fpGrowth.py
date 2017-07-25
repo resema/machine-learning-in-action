@@ -118,6 +118,25 @@ def findPrefixPath(basePat, treeNode):
       condPats[frozenset(prefixPath[1:])] = treeNode.count
     treeNode = treeNode.nodeLink
   return condPats
+  
+'''
+mineTree recursively finds frequent itemsets
+'''
+def mineTree(inTree, headerTable, minSup, preFix, freqItemList):
+  # 1: start from bottom of header file
+  bigL = [v[0] for v in sorted(headerTable.items(), key=lambda p: p[1])]   # sorted by frequency of occurence
+  for basePat in bigL:
+    newFreqSet = preFix.copy()
+    newFreqSet.add(basePat)
+    freqItemList.append(newFreqSet)
+    condPattBases = findPrefixPath(basePat, headerTable[basePat][1])
+    # 2: construct cond. FP-tree from cond. pattern base
+    myCondTree, myHead = createTree(condPattBases, minSup)
+    # 3: mine cond. FP-tree
+    if myHead != None:
+      print 'conditional tree for: ', newFreqSet
+      myCondTree.disp(1)
+      mineTree(myCondTree, myHead, minSup, newFreqSet, freqItemList)
 
 
 
