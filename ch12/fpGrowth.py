@@ -137,6 +137,33 @@ def mineTree(inTree, headerTable, minSup, preFix, freqItemList):
       print 'conditional tree for: ', newFreqSet
       myCondTree.disp(1)
       mineTree(myCondTree, myHead, minSup, newFreqSet, freqItemList)
+      
+'''
+code used to acces Twitter data
+'''
+import twitter
+from time import sleep
+import re
+
+def getLotsOfTweets(searchStr):
+  CONSUMER_KEY = 'SxwQKUD9iREK07xTaTsEpZWvV'
+  CONSUMER_SECRET = 'cqcPrc2FCdwh9CByWNrJIZHNKXbmBBj0CZjgbgqPJudXisN6C6'
+  ACCESS_TOKEN_KEY = '2160501518-XPIWPWIHoyWrSDmmayaFgj21rJmBuzOlSM6brjV'
+  ACCESS_TOKEN_SECRET = 'ISCbBgNyxoN1B6jqIDjeTtzUq6uJQN1aSTcNlwDi5beSy'
+  api = twitter.Api(consumer_key=CONSUMER_KEY,
+                    consumer_secret=CONSUMER_SECRET,
+                    access_token_key=ACCESS_TOKEN_KEY,
+                    access_token_secret=ACCESS_TOKEN_SECRET)
+  # you can get 1500 results 15 pages * 100 per page
+  resultsPages = []
+  # for i in range(1,15):
+    # print "fetching page %d" % i
+    # searchResults = api.GetSearch(searchStr, count=100, page=i)
+    # resultsPages.append(searchResults)
+    # sleep(6)
+  print "fetching page"
+  searchResults = api.GetSearch(searchStr, count=15)
+  return resultsPages
 
 
 
