@@ -18,6 +18,16 @@ def loadDataSet(fileName, delim='\t'):
   datArr = [map(float, line) for line in stringArr]
   return mat(datArr)
   
+def replaceNanWithMean():
+  datMat = loadDataSet('secom.data', ' ')
+  numFeat = shape(datMat)[1]
+  for i in range(numFeat):
+    # 1: find mean of non-NaN values
+    meanVal = mean(datMat[nonzero(~isnan(datMat[:,i].A))[0],i])
+    # 2: set NaN values to mean
+    datMat[nonzero(isnan(datMat[:,i].A))[0],i] = meanVal
+  return datMat
+  
 def pca(dataMat, topNfeat=9999999):
   meanVals = mean(dataMat, axis=0)
   # 1: remove mean
