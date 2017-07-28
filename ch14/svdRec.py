@@ -89,6 +89,37 @@ def svdEst(dataMat, user, simMeas, item):
     return 0
   else:
     return ratSimTotal/simTotal
+    
+'''
+image compression functions
+'''
+def printMat(inMat, thresh=0.8):
+  for i in range(32):   # image is of size 32x32 px
+    for k in range(32):
+      if float(inMat[i,k]) > thresh:
+        print 1,    # ',' needed to not break the line
+      else:
+        print 0,
+    print ''
+    
+def imgCompress(numSV=3, thresh=0.8):
+  my1 = []
+  for line in open('0_5.txt').readlines():
+    newRow = []
+    for i in range(32):
+      newRow.append(int(line[i]))
+    my1.append(newRow)
+  myMat = mat(my1)
+  print '****original matrix*****'
+  printMat(myMat, thresh)
+  U,Sigma,VT = la.svd(myMat)
+  SigRecon = mat(zeros((numSV, numSV)))
+  for k in range(numSV):
+    SigRecon[k,k] = Sigma[k]
+  reconMat = U[:,:numSV]*SigRecon*VT[:numSV,:]
+  print '****reconstructed matrix using %d singular values*****' % numSV
+  printMat(reconMat, thresh)
+    
 
 
 
